@@ -11,7 +11,7 @@ an high performance extension module without the need for writing wrappers.
             author_email = "dave@dabeaz.com",
             maintainer = "David Beazley",
             maintainer_email = "dave@dabeaz.com",
-            url = "http://dabeaz.github.com/bitey/",
+            url = "https://github.com/dabeaz/bitey/",
             packages = ['bitey'],
             classifiers = [
               'Programming Language :: Python :: 2',
