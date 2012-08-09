@@ -1,0 +1,5 @@
+This example shows the use of pre/post loading files to
+alter the constructed module.   The file point.pre.py
+shows how to give bitey the field names for a wrapped
+structure.  The point.post.py file shows how to apply
+a decorator/wrapper to a wrapped function.

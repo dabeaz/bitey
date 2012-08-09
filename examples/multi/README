@@ -1,0 +1,9 @@
+An example of combining two LLVM .o files into a single .o
+file for loading using llvm-ld.
+
+To run:
+
+    % make 
+    % python example.py
+
+

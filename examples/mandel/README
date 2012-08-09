@@ -1,0 +1,20 @@
+Make a mandelbrot set.    This example illustrates the resulting
+speedup you can get by writing code in C.  To run the example,
+first just try running the mandel.py program:
+
+    % python mandel.py
+    Wrote mandel.png
+    12.3137500286 seconds
+    %
+
+Now, try making the LLVM extension module and running again:
+
+    % make
+    clang -emit-llvm -c _mandel.c
+    % python mandel.py
+    Wrote mandel.png
+    0.817422151566 seconds
+    %
+
+Your timing numbers will vary of course.
+

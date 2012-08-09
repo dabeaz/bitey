@@ -1,0 +1,6 @@
+Example of accessing an external C library.   The file
+fib.c is compiled into a standard C library using gcc.
+The file sample.c is compiled using into LLVM bitcode.
+The file example.py shows how you can load the library
+and have the sample.c run against it.
+ 
