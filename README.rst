@@ -286,6 +286,10 @@ whether "Bitey" is adorably cute or a viscious beast that will
 constantly nip your leg.   Actually, I just like the ring of
 it--"Bitey" sort of rhymes with "Enterprisey".
 
+Discussion Group
+================
+A discussion group for Bitey is available at http://groups.google.com/group/bitey
+
 Authors
 ============
 - David Beazley (@dabeaz),  http://www.dabeaz.com
