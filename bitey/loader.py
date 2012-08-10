@@ -26,16 +26,15 @@ def _check_magic(filename):
 def build_module(fullname, bitcode, preload=None, postload=None):
     '''
     Creates a new module from bitcode supplied as a simple byte-string.
-    Stores the newly created module in sys.modules, but does not 
-    return it.
     '''
     name = fullname.split(".")[-1]
-    mod = sys.modules[fullname] = imp.new_module(name)
+    mod = imp.new_module(name)
     if preload:
         exec(preload, mod.__dict__, mod.__dict__)
     bind.build_wrappers(bitcode, mod)
     if postload:
         exec(postload, mod.__dict__, mod.__dict__)
+    return mod
     
 class LLVMLoader(object):
     """
@@ -101,8 +100,8 @@ class LLVMLoader(object):
             with open(self.postload) as f:
                 postload = f.read()
                 
-        build_module(fullname, bitcode, preload, postload)
-        mod = sys.modules[fullname]
+        mod = build_module(fullname, bitcode, preload, postload)
+        sys.modules[fullname] = mod
         mod.__loader__ = self
         mod.__file__ = self.source
         return mod
