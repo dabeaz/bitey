@@ -1,0 +1,37 @@
+This example shows how to send LLVM bitcode over a network connection,
+use Bitey to instantiate a Python module on the remote server, and
+then have a client perform remote procedure call (RPC) with it. It's a
+mobile C extension!
+
+To run the example, first build some LLVM code:
+
+    % clang -emit-llvm -c fib.c
+
+Next, run the server program:
+
+    % python remote.py 15000
+    Waiting for connection
+
+Now, in a different window (or even on a different machine),
+run the client program:
+
+    % python client.py
+    1
+    1
+    2
+    3
+    5
+    8
+    ...
+
+The client reads the fib.o bitcode and transmits it to the server.
+The server turns it into a Python module--all without writing any
+temporary files, using a C compiler, linker, or dynamic loader
+(it's all just created on the fly).   Study the implementation of
+remote.py for details of how it works (mainly, you just need to
+use bitey.loader.build_module()).
+
+
+
+
+
