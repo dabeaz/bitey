@@ -1,4 +1,16 @@
 Bitey Changes Log
 =================
+08/10/2012 : beazley
+             Fixed a bug checking LLVM magic numbers.
+
+08/10/2012 : beazley
+             Minor refactoring of the loader.  There is now a function
+             build_module(fullname, bitcode, preload, postload) that
+             will construct a module and drop it into sys.modules.
+             This can be used to create a module where the bitcode
+             is obtained through some other means than reading a file.
+	     preload and postload are fragments of Python code to
+             execute prior to and after wrapping the bitcode.
+
 08/09/2012 : beazley
              Initial release.

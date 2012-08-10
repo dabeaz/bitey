@@ -16,12 +16,26 @@ def _check_magic(filename):
 	magic = open(filename,"rb").read(4)
         if magic == b'\xde\xc0\x17\x0b':
             return True
-        elif magic == b'\x42\x43':
+        elif magic[:2] == b'\x42\x43':
             return True
         else:
             return False
     else:
 	return False
+
+def build_module(fullname, bitcode, preload=None, postload=None):
+    '''
+    Creates a new module from bitcode supplied as a simple byte-string.
+    Stores the newly created module in sys.modules, but does not 
+    return it.
+    '''
+    name = fullname.split(".")[-1]
+    mod = sys.modules[fullname] = imp.new_module(name)
+    if preload:
+        exec(preload, mod.__dict__, mod.__dict__)
+    bind.build_wrappers(bitcode, mod)
+    if postload:
+        exec(postload, mod.__dict__, mod.__dict__)
     
 class LLVMLoader(object):
     """
@@ -69,23 +83,28 @@ class LLVMLoader(object):
     def load_module(self, fullname):
         if fullname in sys.modules:
             return sys.modules[fullname]
-        mod = sys.modules[fullname] = imp.new_module(self.name)
-        # Look for preload
+
+        preload = None
+        postload = None
+
+        # Get the preload file (if any)
         if os.path.exists(self.preload):
             with open(self.preload) as f:
                 preload = f.read()
-            exec(preload, mod.__dict__, mod.__dict__)
-        # Build the bitcode
+
+        # Get the bit-code
         with open(self.source, 'rb') as f:
             bitcode = f.read()
-        bind.build_wrappers(bitcode, mod)
-        mod.__loader__ = self
-        mod.__file__ = self.source
 
+        # Get the postload file (if any)
         if os.path.exists(self.postload):
             with open(self.postload) as f:
                 postload = f.read()
-            exec(postload, mod.__dict__, mod.__dict__)
+                
+        build_module(fullname, bitcode, preload, postload)
+        mod = sys.modules[fullname]
+        mod.__loader__ = self
+        mod.__file__ = self.source
         return mod
 
 def install():
