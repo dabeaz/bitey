@@ -10,11 +10,23 @@ first just try running the mandel.py program:
 Now, try making the LLVM extension module and running again:
 
     % make
-    clang -emit-llvm -c _mandel.c
+    clang -O3 -emit-llvm -c _mandel.c
     % python mandel.py
     Wrote mandel.png
     0.817422151566 seconds
     %
 
 Your timing numbers will vary of course.
+
+If you want to compare it to a raw ctypes version, do this:
+
+    % make shared
+    gcc -O3 -bundle -undefined dynamic_lookup _mandel.c -o _mandel.so
+    % python mandel_ctypes.py
+    Wrote mandel.png
+    0.8027312584 seconds
+    % 
+
+You should find the performance to be comparable to the Bitey version.
+
 
