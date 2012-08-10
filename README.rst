@@ -11,12 +11,15 @@ Requirements
 ============
 You'll need to have a pretty complete LLVM development environment
 installed on your machine.  Bitey has been developed using
-LLVM/Clang-3.1.  You might need to install it yourself.  Make sure you
-compile LLVM with shared-library support when you build it (e.g., use
-``configure --enable-shared=yes``).
+LLVM/Clang-3.1.  You might need to install it yourself.  
 
 In addition, you need to install the ``llvm-py`` extension.  Get it at
 at http://www.llvmpy.org. 
+
+Bitey is unlikely to work with any older version of LLVM or the llvm-py
+extension--especially preinstalled versions distributed with your
+operating system.  You need to be using bleeding-edge modern versions
+of these libraries.
 
 Example and Basic Tutorial
 ==========================
@@ -202,6 +205,76 @@ linker, the dynamic loader, or make calls to subprocesses.  It is
 completely self-contained and only uses the functionality of
 ``llvm-py`` and ``ctypes``.
 
+Performance
+===========
+The performance profile of Bitey is going to be virtually identical
+that of using ``ctypes``.  LLVM bitcode is translated to native
+machine code and Bitey builds a ``ctypes``-based interface to it
+in exactly the same manner as a normal C library.
+
+As a performance experiment, here is a simple C function that checks
+if a number is prime or not::
+
+   int isprime(int n) {
+       int factor = 3;
+       /* Special case for 2 */
+       if (n == 2) {
+           return 1;
+       }
+       /* Check for even numbers */
+       if ((n % 2) == 0) {
+          return 0;
+       }
+       /* Check for everything else */
+       while (factor*factor < n) {
+           if ((n % factor) == 0) {
+               return 0;
+           }
+           factor += 2;
+       } 
+       return 1;
+    }
+
+Try compiling this code into LLVM and a C shared library::
+
+    % clang -O3 -emit-llvm -c isprime.c
+
+    # OS-X
+    % gcc -O3 -bundle -undefined dynamic_lookup isprime.c -o isprime.so
+
+    # Linux
+    % gcc -O3 -shared isprime.c -o isprime.so
+
+Now, let's put Bitey and ctypes in a head-to-head performance battle::
+
+    >>> import bitey
+    >>> from isprime import isprime as isprime1
+    >>> import ctypes
+    >>> ex = ctypes.cdll.LoadLibrary("./isprime.so")
+    >>> isprime2 = ex.isprime
+    >>> isprime2.argtypes=(ctypes.c_int,)
+    >>> isprime2.restype=ctypes.c_int
+    >>> 
+    >>> from timeit import timeit
+    >>> # Bitey
+    >>> timeit("isprime1(3)","from __main__ import isprime1")
+    1.1813910007476807
+    >>> # ctypes
+    >>> timeit("isprime2(3)", "from __main__ import isprime2")
+    1.2408909797668457
+    >>> 
+    >>> # Bitey
+    >>> timeit("isprime1(10143937)", "from __main__ import isprime1")
+    9.839216947555542
+    >>> # ctypes
+    >>> timeit("isprime2(10143937)", "from __main__ import isprime2")
+    9.663991212844849
+    >>> 
+
+As you can see, the performance is just about the same.  The main
+difference would come down to the efficiency of LLVM vs. gcc code 
+optimization.  
+
 Advanced Usage
 ==============
 If you're up for a bit of adventure, the module creation process can
@@ -256,7 +329,7 @@ The combination of the pre/post loading files gives you almost
 unlimited opportunity for insane evil when loading the bitcode.
 It must be stressed that that these files are executed in
 the space of the module being created---they are not separate 
-imports (e.g., the pre, post, and LLVM bindings all co-exist
+imports (i.e., the pre, post, and LLVM bindings all co-exist
 in the same module namespace).
 
 Automatic Binding
@@ -275,7 +348,9 @@ FAQ
 ===
 Q: Will Bitey ever support C++?
 
-A: No. C++ can bite me.
+A: No. C++ can bite me (*)
+
+(*) I also wrote Swig and still have C++ scars. 
 
 Q: Why is it called "Bitey?"
 
