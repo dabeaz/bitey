@@ -1,5 +1,19 @@
 Bitey Changes Log
 =================
+08/13/2012 : beazley
+             Slight cleanup of the various wrapping functions.  They are
+             now layered a bit better to operate with LLVM at different
+             levels. 
+
+             To wrap bitcode into a module use:
+                 bitey.wrap_llvm_bitcode(bitcode, py_module)
+
+             To wrap an existing LLVM module/engine, use:
+                 bitey.wrap_llvm_module(module, engine, py_module)
+
+             To wrap a single LLVM function, use 
+                 bitey.wrap_llvm_function(function, engine, py_module)
+
 08/10/2012 : beazley
              New examples added.  Check out examples/remote to see
              an example of transmitting LLVM bitcode over a network

@@ -31,7 +31,7 @@ def build_module(fullname, bitcode, preload=None, postload=None):
     mod = imp.new_module(name)
     if preload:
         exec(preload, mod.__dict__, mod.__dict__)
-    bind.build_wrappers(bitcode, mod)
+    bind.wrap_llvm_bitcode(bitcode, mod)
     if postload:
         exec(postload, mod.__dict__, mod.__dict__)
     return mod
