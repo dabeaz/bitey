@@ -1,0 +1,61 @@
+LIMITATIONS
+===========
+Bitey is a research project that explores the use of LLVM bitcode
+with Python extension modules.  As this is rather experimental,
+it's not entirely known if this approach will work or not. This
+file lists known limitations of this approach.
+
+1. Structures
+=============
+Structure definitions don't record field names.  So, if you have
+this structure:
+
+   struct Point {
+       double x;
+       double y;
+   }
+
+The resulting LLVM type definition is:
+
+   %struct.Point = type { double, double }
+
+To access the fields, they would either need to have assigned names
+or be specified separately.
+
+2. Unions
+==========
+C code compiled with clang does not preserve information about
+union fields.  For example, if you have a union like this:
+
+   union Value {
+       int ival;
+       double dval;
+   };
+
+then clang produces the following bitcode:
+
+   %union.Value = type { double }
+
+As you can see, the different union fields have been lost.  It
+seems that clang merely emits a union whose member is that of
+the largest memory sized needed.  The generated IR code is
+generated accordingly to address different fields.
+
+To work with a union, it would probably be necessary to specify
+the fields separately using a ctypes-style declaration.  In
+theory, it might be possible to scan the IR looking for uses
+of the union to deduce different fields.
+
+3. Arrays
+=========
+
+clang collapses C arrays into pointers.   So, the following
+two declarations are equivalent:
+
+    void foo(double *x);
+    void bar(double x[N]);
+
+No information about size (N) is found in the bitcode. 
+
+
+
