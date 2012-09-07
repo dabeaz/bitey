@@ -13,7 +13,7 @@ from . import bind
 
 def _check_magic(filename):
     if os.path.exists(filename):
-	magic = open(filename,"rb").read(4)
+        magic = open(filename,"rb").read(4)
         if magic == b'\xde\xc0\x17\x0b':
             return True
         elif magic[:2] == b'\x42\x43':
@@ -21,7 +21,7 @@ def _check_magic(filename):
         else:
             return False
     else:
-	return False
+        return False
 
 def build_module(fullname, bitcode, preload=None, postload=None):
     '''
@@ -41,24 +41,24 @@ class LLVMLoader(object):
     Load LLVM compiled bitcode and autogenerate a ctypes binding
     """
     def __init__(self, pkg, name, source, preload, postload):
-	self.package = pkg
-	self.name = name
-	self.fullname = '.'.join((pkg,name))
-	self.source = source
+        self.package = pkg
+        self.name = name
+        self.fullname = '.'.join((pkg,name))
+        self.source = source
         self.preload = preload
         self.postload = postload
 
     @classmethod
     def find_module(cls, fullname, paths = None):
-	if paths is None:
-	    paths = sys.path
+        if paths is None:
+            paths = sys.path
                         
         names = fullname.split('.')
         modname = names[-1]
         for f in paths:
             path = os.path.join(os.path.realpath(f), modname)
             source = path + '.o'
-	    if _check_magic(source):
+            if _check_magic(source):
                 preload = path + ".pre.py"
                 postload = path + ".post.py"
                 return cls('.'.join(names[:-1]), modname, source, preload, postload)
