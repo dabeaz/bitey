@@ -10,6 +10,8 @@ import io
 import os
 import sys
 
+PY3 = sys.version_info[0] >= 3
+
 def map_llvm_to_ctypes(llvm_type, py_module=None):
     '''
     Map an LLVM type to an equivalent ctypes type. py_module is an
@@ -49,7 +51,10 @@ def map_llvm_to_ctypes(llvm_type, py_module=None):
             ctype = ctypes.POINTER(map_llvm_to_ctypes(pointee, py_module))
 
     elif kind == llvm.core.TYPE_STRUCT:
-        struct_name = llvm_type.name.split('.')[-1].encode('ascii')
+        struct_name = llvm_type.name.split('.')[-1]
+        if not PY3:
+            struct_name = struct_name.encode('ascii')
+        
         # If the named type is already known, return it
         if py_module:
             struct_type = getattr(py_module, struct_name, None)
