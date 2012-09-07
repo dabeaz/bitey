@@ -168,7 +168,7 @@ However, you can load the library yourself doing this::
  
     % python
     >>> import bitey
-    >>> bitey.load_library("./libfoo.so")
+    >>> bitey.load_library("./libfib.so")
    <CDLL './libfib.so', handle 1003cfc60 at 10049d090>
     >>> import sample
     >>> sample.print_fib(10)
