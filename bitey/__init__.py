@@ -12,6 +12,6 @@ def load_library(name):
     return _library_cache[name]
 
 # Bring some common binding functions up one lever
-from bind import wrap_llvm_bitcode, wrap_llvm_module, wrap_llvm_function
+from .bind import wrap_llvm_bitcode, wrap_llvm_module, wrap_llvm_function
 
 

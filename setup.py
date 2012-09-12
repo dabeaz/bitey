@@ -15,5 +15,6 @@ an high performance extension module without the need for writing wrappers.
             packages = ['bitey'],
             classifiers = [
               'Programming Language :: Python :: 2',
+              'Programming Language :: Python :: 3',
               ]
             )
