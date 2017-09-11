@@ -57,7 +57,7 @@ class LLVMLoader(object):
         modname = names[-1]
         for f in paths:
             path = os.path.join(os.path.realpath(f), modname)
-            source = path + '.o'
+            source = path + '.bc'
             if _check_magic(source):
                 preload = path + ".pre.py"
                 postload = path + ".post.py"
